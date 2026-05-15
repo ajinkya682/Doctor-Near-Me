@@ -21,7 +21,7 @@ export default function MainLayout({ children }) {
       <main className="w-full max-w-mobile min-h-screen bg-white dark:bg-zinc-900 shadow-[0_0_50px_-12px_rgba(0,0,0,0.1)] dark:shadow-none flex flex-col relative">
         <TopBar />
         
-        <div className="flex-1 pb-20">
+        <div className="flex-1 flex flex-col pb-20">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
