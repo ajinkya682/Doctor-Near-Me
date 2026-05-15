@@ -1,19 +1,24 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useStore } from "./store/useStore";
+import MainLayout from "./layouts/MainLayout";
 
 // Pages (Placeholders)
-const Home = () => <div className="p-4">Home Page</div>;
-const Search = () => <div className="p-4">Search Page</div>;
-const ClinicDetail = () => <div className="p-4">Clinic Detail</div>;
-const DoctorProfile = () => <div className="p-4">Doctor Profile</div>;
-const BookAppointment = () => <div className="p-4">Book Appointment</div>;
-const MyBookings = () => <div className="p-4">My Bookings</div>;
-const Login = () => <div className="p-4">Login Page</div>;
-const NotFound = () => <div className="p-4 text-center">404 - Page Not Found</div>;
+const Home = () => (
+  <div className="p-6">
+    <h1 className="text-2xl font-bold mb-4">Good Morning, Alex 👋</h1>
+    <div className="card-premium p-4 h-40 flex items-center justify-center text-zinc-400">
+      Upcoming Appointment Placeholder
+    </div>
+  </div>
+);
+const Search = () => <div className="p-6 h-screen flex items-center justify-center text-zinc-400">Map View Placeholder</div>;
+const MyBookings = () => <div className="p-6 h-screen flex items-center justify-center text-zinc-400">Bookings List Placeholder</div>;
+const Profile = () => <div className="p-6 h-screen flex items-center justify-center text-zinc-400">User Profile Placeholder</div>;
 
 function App() {
   const { theme } = useStore();
+  const location = useLocation();
 
   useEffect(() => {
     if (theme === "dark") {
@@ -24,18 +29,15 @@ function App() {
   }, [theme]);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-      <Routes>
+    <MainLayout>
+      <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
         <Route path="/search" element={<Search />} />
-        <Route path="/clinic/:id" element={<ClinicDetail />} />
-        <Route path="/doctor/:id" element={<DoctorProfile />} />
-        <Route path="/book/:doctorId" element={<BookAppointment />} />
         <Route path="/my-bookings" element={<MyBookings />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/login" element={<div className="p-6">Login</div>} />
       </Routes>
-    </div>
+    </MainLayout>
   );
 }
 

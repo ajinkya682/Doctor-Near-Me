@@ -1,6 +1,15 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+const getInitialTheme = () => {
+  const savedTheme = localStorage.getItem("doctor-near-me-storage");
+  if (savedTheme) {
+    const { state } = JSON.parse(savedTheme);
+    if (state.theme) return state.theme;
+  }
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+};
+
 export const useStore = create(
   persist(
     (set) => ({
@@ -20,7 +29,7 @@ export const useStore = create(
       },
 
       // UI Slice
-      theme: "light",
+      theme: getInitialTheme(),
       toggleTheme: () =>
         set((state) => ({ theme: state.theme === "light" ? "dark" : "light" })),
 
