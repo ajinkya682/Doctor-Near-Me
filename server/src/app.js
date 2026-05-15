@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
-import dotenv from "dotenv";
+import config from "./config/config.js";
 
 // Routes
 import authRoutes from "./routes/auth.routes.js";
@@ -11,15 +11,13 @@ import appointmentRoutes from "./routes/appointment.routes.js";
 import webhookRoutes from "./routes/webhook.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
 
-dotenv.config();
-
 const app = express();
 
 // Middleware
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: config.clientUrl,
     credentials: true,
   })
 );

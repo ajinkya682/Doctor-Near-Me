@@ -5,6 +5,7 @@ import {
   generateRefreshToken,
 } from "../utils/generateToken.js";
 import jwt from "jsonwebtoken";
+import config from "../config/config.js";
 
 /**
  * @desc    Request OTP
@@ -64,7 +65,7 @@ export const verifyOTP = async (req, res) => {
     // Set refresh token as httpOnly cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: config.nodeEnv === "production",
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
@@ -95,7 +96,7 @@ export const refreshToken = async (req, res) => {
     return res.status(401).json({ message: "No refresh token" });
 
   try {
-    const decoded = jwt.verify(refreshTokenValue, process.env.JWT_REFRESH_SECRET);
+    const decoded = jwt.verify(refreshTokenValue, config.jwtRefreshSecret);
     const accessToken = generateToken(decoded.id);
     res.json({ token: accessToken });
   } catch (error) {

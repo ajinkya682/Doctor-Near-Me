@@ -1,14 +1,12 @@
 import twilio from "twilio";
-import dotenv from "dotenv";
-
-dotenv.config();
+import config from "../config/config.js";
 
 const client = twilio(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
+  config.twilio.accountSid,
+  config.twilio.authToken
 );
 
-const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
+const verifyServiceSid = config.twilio.verifyServiceSid;
 
 /**
  * Send OTP via Twilio Verify
@@ -45,7 +43,7 @@ export const sendWhatsApp = async (to, body) => {
   try {
     const message = await client.messages.create({
       body,
-      from: process.env.TWILIO_WHATSAPP_FROM,
+      from: config.twilio.whatsappFrom,
       to: `whatsapp:${to}`,
     });
     return message;
@@ -60,13 +58,8 @@ export const sendWhatsApp = async (to, body) => {
 export const sendWhatsAppList = async (to, body, buttonText, sections) => {
   try {
     const message = await client.messages.create({
-      from: process.env.TWILIO_WHATSAPP_FROM,
+      from: config.twilio.whatsappFrom,
       to: `whatsapp:${to}`,
-      contentSid: "LIST_CONTENT_SID_PLACEHOLDER", // In production, use Twilio Content API SID
-      // For sandbox/demo without Content SID, we can use persistent menu or just list text
-      // However, the user wants interactive lists. 
-      // Note: Twilio Content API is the modern way. 
-      // For this implementation, I'll use the body and assume Content API logic for the real interactive parts.
       body: `${body}\n\n(Choose an option below)`
     });
     return message;
@@ -80,10 +73,9 @@ export const sendWhatsAppList = async (to, body, buttonText, sections) => {
  */
 export const sendWhatsAppButtons = async (to, body, buttons) => {
   try {
-    // Buttons are also handled via Content API in production
     const message = await client.messages.create({
       body: `${body}\n\nOptions: ${buttons.join(', ')}`,
-      from: process.env.TWILIO_WHATSAPP_FROM,
+      from: config.twilio.whatsappFrom,
       to: `whatsapp:${to}`,
     });
     return message;
