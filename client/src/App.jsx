@@ -4,6 +4,8 @@ import { useStore } from "./store/useStore";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 import Search from "./pages/Search";
+import ClinicDetail from "./pages/ClinicDetail";
+import DoctorProfile from "./pages/DoctorProfile";
 
 // Pages (Placeholders)
 const MyBookings = () => (
@@ -36,6 +38,8 @@ function App() {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/clinic/:id" element={<ClinicDetail />} />
+        <Route path="/doctor/:id" element={<DoctorProfile />} />
         <Route path="/my-bookings" element={<MyBookings />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<div className="p-6 text-zinc-900 dark:text-zinc-100">Login</div>} />
