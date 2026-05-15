@@ -9,21 +9,72 @@ import mongoose from "mongoose";
 
 const botMessages = {
   en: {
-    welcome: "Welcome to Doctor Near Me! 🏥",
+    welcome: "Welcome to Doctor Near Me.",
     selectLanguage: "Please select your preferred language:",
-    askLocation: "Please share your current location using WhatsApp's location sharing feature. 📍",
+    askLocation: "Please share your current location using WhatsApp location sharing feature.",
     searching: "Searching for clinics near you...",
-    noClinics: "Sorry, I couldn't find any clinics within 5km of your location.",
-    foundClinics: "Here are the top 5 clinics near you. Please select one:",
-    selectDoctor: "Please select a doctor at this clinic:",
-    selectDate: "Select a date for your appointment:",
-    selectSlot: "Select an available time slot:",
-    confirmBooking: (details) => `Please confirm your booking:\n\n👨‍⚕️ Doctor: ${details.doctor}\n🏥 Clinic: ${details.clinic}\n📅 Date: ${details.date}\n⏰ Time: ${details.slot}\n💰 Fee: ₹${details.fee}\n\nConfirm?`,
-    bookingSuccess: "Your appointment is confirmed! ✅ See you soon.",
-    bookingFailed: "Sorry, that slot was just taken. Please try again.",
-    invalidInput: "I didn't understand that. Please try again or use the buttons/list provided."
+    noClinics: "Sorry, no clinics were found within 5 km of your location.",
+    foundClinics: "Here are the top clinics near you. Please select one:",
+    selectDoctor: "Please select a doctor from this clinic:",
+    selectDate: "Please select a date for your appointment:",
+    selectSlot: "Please select an available time slot:",
+    confirmBooking: (details) =>
+      `Please confirm your booking:\n\nDoctor: ${details.doctor}\nClinic: ${details.clinic}\nDate: ${details.date}\nTime: ${details.slot}\nFee: ₹${details.fee}\n\nDo you want to confirm this appointment?`,
+    bookingSuccess: "Your appointment has been confirmed successfully.",
+    bookingFailed: "Sorry, this slot was just booked. Please try another time.",
+    invalidInput: "I didn't understand that. Please use the provided options or try again."
+  },
+
+  hi: {
+    welcome: "Doctor Near Me में आपका स्वागत है।",
+    selectLanguage: "कृपया अपनी पसंदीदा भाषा चुनें:",
+    askLocation: "कृपया WhatsApp लोकेशन शेयरिंग के माध्यम से अपना वर्तमान स्थान भेजें।",
+    searching: "आपके नज़दीकी क्लिनिक खोजे जा रहे हैं...",
+    noClinics: "क्षमा करें, आपके स्थान के 5 किमी के अंदर कोई क्लिनिक नहीं मिला।",
+    foundClinics: "आपके पास के प्रमुख क्लिनिक यहां हैं। कृपया एक चुनें:",
+    selectDoctor: "कृपया इस क्लिनिक से डॉक्टर चुनें:",
+    selectDate: "अपॉइंटमेंट के लिए तारीख चुनें:",
+    selectSlot: "उपलब्ध समय स्लॉट चुनें:",
+    confirmBooking: (details) =>
+      `कृपया अपनी बुकिंग की पुष्टि करें:\n\nडॉक्टर: ${details.doctor}\nक्लिनिक: ${details.clinic}\nतारीख: ${details.date}\nसमय: ${details.slot}\nफीस: ₹${details.fee}\n\nक्या आप इस अपॉइंटमेंट की पुष्टि करना चाहते हैं?`,
+    bookingSuccess: "आपकी अपॉइंटमेंट सफलतापूर्वक कन्फर्म हो गई है।",
+    bookingFailed: "क्षमा करें, यह स्लॉट अभी-अभी बुक हो गया है। कृपया दूसरा समय चुनें।",
+    invalidInput: "मैं समझ नहीं पाया। कृपया दिए गए विकल्पों का उपयोग करें या फिर से प्रयास करें।"
+  },
+
+  mr: {
+    welcome: "Doctor Near Me मध्ये आपले स्वागत आहे.",
+    selectLanguage: "कृपया तुमची आवडती भाषा निवडा:",
+    askLocation: "कृपया WhatsApp लोकेशन शेअर करून तुमचे वर्तमान स्थान पाठवा.",
+    searching: "तुमच्या जवळील क्लिनिक शोधले जात आहेत...",
+    noClinics: "माफ करा, तुमच्या स्थानापासून 5 किमी परिसरात कोणतेही क्लिनिक सापडले नाही.",
+    foundClinics: "तुमच्या जवळील प्रमुख क्लिनिक येथे आहेत. कृपया एक निवडा:",
+    selectDoctor: "कृपया या क्लिनिकमधून डॉक्टर निवडा:",
+    selectDate: "अपॉइंटमेंटसाठी तारीख निवडा:",
+    selectSlot: "उपलब्ध वेळ स्लॉट निवडा:",
+    confirmBooking: (details) =>
+      `कृपया तुमची बुकिंग निश्चित करा:\n\nडॉक्टर: ${details.doctor}\nक्लिनिक: ${details.clinic}\nतारीख: ${details.date}\nवेळ: ${details.slot}\nफीस: ₹${details.fee}\n\nतुम्ही ही अपॉइंटमेंट निश्चित करू इच्छिता का?`,
+    bookingSuccess: "तुमची अपॉइंटमेंट यशस्वीरित्या निश्चित झाली आहे.",
+    bookingFailed: "माफ करा, हा स्लॉट नुकताच बुक झाला आहे. कृपया दुसरा वेळ निवडा.",
+    invalidInput: "मला समजले नाही. कृपया दिलेले पर्याय वापरा किंवा पुन्हा प्रयत्न करा."
+  },
+
+  gu: {
+    welcome: "Doctor Near Me માં આપનું સ્વાગત છે.",
+    selectLanguage: "કૃપા કરીને તમારી પસંદગીની ભાષા પસંદ કરો:",
+    askLocation: "કૃપા કરીને WhatsApp લોકેશન શેરિંગ દ્વારા તમારું વર્તમાન સ્થાન મોકલો.",
+    searching: "તમારા નજીકના ક્લિનિક શોધી રહ્યા છીએ...",
+    noClinics: "માફ કરશો, તમારા સ્થાનથી 5 કિમીની અંદર કોઈ ક્લિનિક મળ્યું નથી.",
+    foundClinics: "તમારા નજીકના મુખ્ય ક્લિનિક અહીં છે. કૃપા કરીને એક પસંદ કરો:",
+    selectDoctor: "કૃપા કરીને આ ક્લિનિકમાંથી ડૉક્ટર પસંદ કરો:",
+    selectDate: "એપોઇન્ટમેન્ટ માટે તારીખ પસંદ કરો:",
+    selectSlot: "ઉપલબ્ધ સમય સ્લોટ પસંદ કરો:",
+    confirmBooking: (details) =>
+      `કૃપા કરીને તમારી બુકિંગની પુષ્ટિ કરો:\n\nડૉક્ટર: ${details.doctor}\nક્લિનિક: ${details.clinic}\nતારીખ: ${details.date}\nસમય: ${details.slot}\nફી: ₹${details.fee}\n\nશું તમે આ એપોઇન્ટમેન્ટ કન્ફર્મ કરવા માંગો છો?`,
+    bookingSuccess: "તમારી એપોઇન્ટમેન્ટ સફળતાપૂર્વક કન્ફર્મ થઈ ગઈ છે.",
+    bookingFailed: "માફ કરશો, આ સ્લોટ હમણાં જ બુક થઈ ગયો છે. કૃપા કરીને બીજો સમય પસંદ કરો.",
+    invalidInput: "મને સમજાયું નથી. કૃપા કરીને આપેલા વિકલ્પોનો ઉપયોગ કરો અથવા ફરી પ્રયાસ કરો."
   }
-  // Hindi, Marathi, Gujarati can be added here
 };
 
 export const handleBotFlow = async (phone, body, latitude, longitude) => {
