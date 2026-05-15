@@ -1,5 +1,4 @@
-import { sendWhatsApp } from "../services/twilio.service.js";
-import WhatsappSession from "../models/WhatsappSession.js";
+import { handleBotFlow } from "../services/bot.service.js";
 
 /**
  * @desc    WhatsApp Webhook
@@ -7,20 +6,24 @@ import WhatsappSession from "../models/WhatsappSession.js";
  * @access  Public (Twilio)
  */
 export const handleWhatsAppWebhook = async (req, res) => {
-  const { Body, From } = req.body;
+  const { Body, From, Latitude, Longitude } = req.body;
+  
+  // From is in format "whatsapp:+9188..."
   const phone = From.replace("whatsapp:", "");
 
   try {
-    // This is just a placeholder for the bot flow
-    // Full logic will be implemented in Part 4
-    console.log(`Message from ${phone}: ${Body}`);
-
-    // Echo for now
-    await sendWhatsApp(phone, `You said: ${Body}. Bot flow coming soon!`);
-
+    // Process the message through the bot state machine
+    await handleBotFlow(
+      phone, 
+      Body, 
+      Latitude ? parseFloat(Latitude) : null, 
+      Longitude ? parseFloat(Longitude) : null
+    );
+    
+    // Twilio expects a 200 OK response
     res.status(200).send("OK");
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error");
+    console.error(`Webhook Error: ${error.message}`);
+    res.status(500).send("Internal Server Error");
   }
 };
