@@ -3,23 +3,18 @@ import { useEffect } from "react";
 import { useStore } from "./store/useStore";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
+import Search from "./pages/Search";
 
 // Pages (Placeholders)
-const Search = () => (
-  <div className="p-6 h-screen flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500">
-    <h2 className="text-xl font-bold mb-2">Search & Map View</h2>
-    <p>Coming in Part 9...</p>
-  </div>
-);
 const MyBookings = () => (
   <div className="p-6 h-screen flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500">
-    <h2 className="text-xl font-bold mb-2">My Bookings</h2>
+    <h2 className="text-xl font-bold mb-2 text-zinc-900 dark:text-zinc-100">My Bookings</h2>
     <p>Loading your appointments...</p>
   </div>
 );
 const Profile = () => (
   <div className="p-6 h-screen flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500">
-    <h2 className="text-xl font-bold mb-2">User Profile</h2>
+    <h2 className="text-xl font-bold mb-2 text-zinc-900 dark:text-zinc-100">User Profile</h2>
     <p>Manage your account...</p>
   </div>
 );
