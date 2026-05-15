@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useStore } from "../store/useStore";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, User, Phone, Mail, Languages, Moon, Sun, Bell, Info, LogOut, ChevronRight, Check } from "lucide-react";
+import { Camera, User, Phone, Mail, Languages, Moon, Sun, Bell, Info, LogOut, ChevronRight, Check, ShieldCheck } from "lucide-react";
 
 export default function Profile() {
+  const navigate = useNavigate();
   const { theme, toggleTheme } = useStore();
   const [isEditingName, setIsEditingName] = useState(false);
   const [userName, setUserName] = useState("Ajinkya Saivar");
@@ -134,6 +136,33 @@ export default function Profile() {
             <div className="flex items-center space-x-4">
               <Info size={18} className="text-primary-600" />
               <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">About App</span>
+            </div>
+            <ChevronRight size={16} className="text-zinc-300" />
+          </button>
+        </div>
+      </div>
+
+      {/* Developer / Quick Access (For Demo) */}
+      <div className="px-6 py-4 space-y-2">
+        <h3 className="text-[10px] uppercase tracking-widest font-black text-zinc-400 mb-4 ml-2">Developer Access</h3>
+        <div className="card-premium divide-y divide-zinc-50 dark:divide-zinc-800">
+          <button 
+            onClick={() => navigate("/doctor/dashboard")}
+            className="w-full p-4 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
+          >
+            <div className="flex items-center space-x-4">
+              <User size={18} className="text-zinc-400" />
+              <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Doctor Dashboard</span>
+            </div>
+            <ChevronRight size={16} className="text-zinc-300" />
+          </button>
+          <button 
+            onClick={() => navigate("/admin/dashboard")}
+            className="w-full p-4 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
+          >
+            <div className="flex items-center space-x-4">
+              <ShieldCheck size={18} className="text-zinc-400" />
+              <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Admin Dashboard</span>
             </div>
             <ChevronRight size={16} className="text-zinc-300" />
           </button>
