@@ -15,6 +15,11 @@ const resources = {
       "search": "Search",
       "bookings": "Bookings",
       "profile": "Profile",
+      "upcoming": "Upcoming",
+      "past": "Past",
+      "language": "Language",
+      "dark_mode": "Dark Mode",
+      "logout": "Logout",
     }
   },
   hi: {
@@ -29,6 +34,11 @@ const resources = {
       "search": "खोजें",
       "bookings": "बुकिंग",
       "profile": "प्रोफाइल",
+      "upcoming": "आगामी",
+      "past": "पिछला",
+      "language": "भाषा",
+      "dark_mode": "डार्क मोड",
+      "logout": "लॉग आउट",
     }
   },
   mr: {
@@ -43,6 +53,11 @@ const resources = {
       "search": "शोध",
       "bookings": "बुकिंग",
       "profile": "प्रोफाइल",
+      "upcoming": "येणारे",
+      "past": "मागील",
+      "language": "भाषा",
+      "dark_mode": "डार्क मोड",
+      "logout": "लॉग आउट",
     }
   },
   gu: {
@@ -57,6 +72,11 @@ const resources = {
       "search": "શોધ",
       "bookings": "બુકિંગ",
       "profile": "પ્રોફાઇલ",
+      "upcoming": "આગામી",
+      "past": "ભૂતકાળ",
+      "language": "ભાષા",
+      "dark_mode": "ડાર્ક મોડ",
+      "logout": "લોગ આઉટ",
     }
   }
 };
