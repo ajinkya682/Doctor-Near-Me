@@ -2,6 +2,7 @@ import { useIsFetching } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import BottomNav from "../components/BottomNav";
+import TopBar from "../components/TopBar";
 
 export default function MainLayout({ children }) {
   const isFetching = useIsFetching();
@@ -18,6 +19,8 @@ export default function MainLayout({ children }) {
 
       {/* Main Column constrained to 480px */}
       <main className="w-full max-w-mobile min-h-screen bg-white dark:bg-zinc-900 shadow-[0_0_50px_-12px_rgba(0,0,0,0.1)] dark:shadow-none flex flex-col relative">
+        <TopBar />
+        
         <div className="flex-1 pb-20">
           <AnimatePresence mode="wait">
             <motion.div
