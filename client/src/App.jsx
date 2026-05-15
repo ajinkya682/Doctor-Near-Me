@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import Search from "./pages/Search";
 import ClinicDetail from "./pages/ClinicDetail";
 import DoctorProfile from "./pages/DoctorProfile";
+import BookingConfirmation from "./pages/BookingConfirmation";
 
 // Pages (Placeholders)
 const MyBookings = () => (
@@ -40,6 +41,7 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/clinic/:id" element={<ClinicDetail />} />
         <Route path="/doctor/:id" element={<DoctorProfile />} />
+        <Route path="/booking-confirm" element={<BookingConfirmation />} />
         <Route path="/my-bookings" element={<MyBookings />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<div className="p-6 text-zinc-900 dark:text-zinc-100">Login</div>} />
