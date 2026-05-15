@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, Calendar, Clock, CreditCard, FileText, CheckCircle2, Share2, CalendarPlus } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, CreditCard, FileText, CheckCircle2, Share2, CalendarPlus, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 

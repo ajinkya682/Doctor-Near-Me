@@ -7,20 +7,8 @@ import Search from "./pages/Search";
 import ClinicDetail from "./pages/ClinicDetail";
 import DoctorProfile from "./pages/DoctorProfile";
 import BookingConfirmation from "./pages/BookingConfirmation";
-
-// Pages (Placeholders)
-const MyBookings = () => (
-  <div className="p-6 h-screen flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500">
-    <h2 className="text-xl font-bold mb-2 text-zinc-900 dark:text-zinc-100">My Bookings</h2>
-    <p>Loading your appointments...</p>
-  </div>
-);
-const Profile = () => (
-  <div className="p-6 h-screen flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500">
-    <h2 className="text-xl font-bold mb-2 text-zinc-900 dark:text-zinc-100">User Profile</h2>
-    <p>Manage your account...</p>
-  </div>
-);
+import MyBookings from "./pages/MyBookings";
+import Profile from "./pages/Profile";
 
 function App() {
   const { theme } = useStore();
