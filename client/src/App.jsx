@@ -11,9 +11,9 @@ import PatientLayout from './layouts/PatientLayout';
 import ClinicOwnerLayout from './layouts/ClinicOwnerLayout';
 import AdminLayout from './layouts/AdminLayout';
 
-// Pages (Placeholders)
-const Home = () => <div>Home Page</div>;
-const Search = () => <div>Search Page</div>;
+// Pages
+import Home from './pages/Home';
+import Search from './pages/Search';
 const Appointments = () => <div>My Bookings</div>;
 const Profile = () => <div>Profile Page</div>;
 const Login = () => <div>Login Page</div>;
