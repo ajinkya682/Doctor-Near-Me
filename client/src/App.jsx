@@ -14,9 +14,9 @@ import AdminLayout from './layouts/AdminLayout';
 // Pages
 import Home from './pages/Home';
 import Search from './pages/Search';
+import Login from './pages/Login';
 const Appointments = () => <div>My Bookings</div>;
 const Profile = () => <div>Profile Page</div>;
-const Login = () => <div>Login Page</div>;
 const ClinicDashboard = () => <div>Clinic Dashboard</div>;
 const AdminDashboard = () => <div>Admin Dashboard</div>;
 
