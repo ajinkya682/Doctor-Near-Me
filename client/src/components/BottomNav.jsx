@@ -1,51 +1,49 @@
-import { NavLink } from "react-router-dom";
-import { Home, Search, Calendar, User } from "lucide-react";
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Home, Search, Calendar, User } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-const cn = (...inputs) => twMerge(clsx(inputs));
+const BottomNav = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-const navItems = [
-  { path: "/", icon: Home, label: "Home" },
-  { path: "/search", icon: Search, label: "Search" },
-  { path: "/my-bookings", icon: Calendar, label: "Bookings" },
-  { path: "/profile", icon: User, label: "Profile" },
-];
+  const tabs = [
+    { id: 'home', label: 'Home', icon: Home, path: '/' },
+    { id: 'search', label: 'Search', icon: Search, path: '/search' },
+    { id: 'bookings', label: 'Bookings', icon: Calendar, path: '/appointments' },
+    { id: 'profile', label: 'Profile', icon: User, path: '/profile' }
+  ];
 
-export default function BottomNav() {
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-mobile z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-lg border-t border-zinc-100 dark:border-zinc-800 safe-bottom">
-      <div className="flex justify-around items-center h-16 px-4">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              cn(
-                "relative flex flex-col items-center justify-center space-y-1 transition-colors duration-200",
-                isActive
-                  ? "text-primary-600 dark:text-primary-400"
-                  : "text-zinc-400 dark:text-zinc-600"
-              )
-            }
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 h-20 flex items-center justify-around px-2 z-50">
+      {tabs.map((tab) => {
+        const isActive = location.pathname === tab.path;
+        return (
+          <button
+            key={tab.id}
+            onClick={() => navigate(tab.path)}
+            className="relative flex flex-col items-center gap-1 p-2 min-w-[64px]"
           >
-            {({ isActive }) => (
-              <>
-                <item.icon
-                  size={24}
-                  className={cn("transition-transform duration-200", isActive && "scale-110")}
-                />
-                <span className="text-[10px] font-medium uppercase tracking-wider">
-                  {item.label}
-                </span>
-                {isActive && (
-                  <div className="absolute -bottom-1 w-1 h-1 rounded-full bg-current" />
-                )}
-              </>
+            <motion.div
+              whileTap={{ scale: 0.9 }}
+              transition={{ duration: 0.15 }}
+              className={`flex flex-col items-center ${isActive ? 'text-teal-500' : 'text-gray-400 dark:text-gray-500'}`}
+            >
+              <tab.icon size={24} strokeWidth={isActive ? 2.5 : 2} />
+              <span className="text-[10px] font-medium">{tab.label}</span>
+            </motion.div>
+
+            {isActive && (
+              <motion.div
+                layoutId="activeTabIndicator"
+                className="absolute -top-1 w-12 h-1 bg-teal-500 rounded-full"
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              />
             )}
-          </NavLink>
-        ))}
-      </div>
-    </nav>
+          </button>
+        );
+      })}
+    </div>
   );
-}
+};
+
+export default BottomNav;

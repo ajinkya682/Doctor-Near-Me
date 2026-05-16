@@ -1,62 +1,92 @@
-import { Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
-import { useStore } from "./store/useStore";
-import { Toaster, toast } from "react-hot-toast";
-import { socket } from "./lib/socket";
-import MainLayout from "./layouts/MainLayout";
-import Home from "./pages/Home";
-import Search from "./pages/Search";
-import ClinicDetail from "./pages/ClinicDetail";
-import DoctorProfile from "./pages/DoctorProfile";
-import BookingConfirmation from "./pages/BookingConfirmation";
-import MyBookings from "./pages/MyBookings";
-import Profile from "./pages/Profile";
-import DoctorDashboard from "./pages/DoctorDashboard";
-import AdminDashboard from "./pages/AdminDashboard";
+import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
+import { AnimatePresence } from 'framer-motion';
+import { useThemeStore, useLanguageStore } from './store/useStore';
+import i18n from './i18n/config';
+
+// Layouts
+import PatientLayout from './layouts/PatientLayout';
+import ClinicOwnerLayout from './layouts/ClinicOwnerLayout';
+import AdminLayout from './layouts/AdminLayout';
+
+// Pages (Placeholders)
+const Home = () => <div>Home Page</div>;
+const Search = () => <div>Search Page</div>;
+const Appointments = () => <div>My Bookings</div>;
+const Profile = () => <div>Profile Page</div>;
+const Login = () => <div>Login Page</div>;
+const ClinicDashboard = () => <div>Clinic Dashboard</div>;
+const AdminDashboard = () => <div>Admin Dashboard</div>;
+
+const queryClient = new QueryClient();
 
 function App() {
-  const { theme } = useStore();
-  const location = useLocation();
+  const { theme } = useThemeStore();
+  const { language } = useLanguageStore();
 
   useEffect(() => {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
     } else {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.remove('dark');
     }
   }, [theme]);
 
-  // Socket Connection & Listeners (Disabled for Demo Mode)
   useEffect(() => {
-    /*
-    socket.connect();
-    const mockUserId = "user-123"; 
-    socket.emit("join_room", mockUserId);
-    ...
-    */
-  }, [theme]);
+    i18n.changeLanguage(language);
+  }, [language]);
 
   return (
-    <>
-      <Toaster />
-      <MainLayout>
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<Home />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/clinic/:id" element={<ClinicDetail />} />
-          <Route path="/doctor/:id" element={<DoctorProfile />} />
-          <Route path="/booking-confirm" element={<BookingConfirmation />} />
-          <Route path="/my-bookings" element={<MyBookings />} />
-          <Route path="/profile" element={<Profile />} />
-          
-          {/* Dashboard Routes */}
-          <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          
-          <Route path="/login" element={<div className="p-6 text-zinc-900 dark:text-zinc-100">Login</div>} />
-        </Routes>
-      </MainLayout>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <AnimatePresence mode="wait">
+          <Routes>
+            {/* Public Auth Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/clinic/login" element={<Login />} />
+            <Route path="/clinic/register" element={<div>Register</div>} />
+
+            {/* Patient App (480px Centered) */}
+            <Route path="/" element={<PatientLayout />}>
+              <Route index element={<Home />} />
+              <Route path="search" element={<Search />} />
+              <Route path="appointments" element={<Appointments />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="clinics/:slug" element={<div>Clinic Detail</div>} />
+              <Route path="doctors/:id" element={<div>Doctor Profile</div>} />
+              <Route path="notifications" element={<div>Notifications</div>} />
+            </Route>
+
+            {/* Clinic Owner App (Responsive Sidebar) */}
+            <Route path="/clinic" element={<ClinicOwnerLayout />}>
+              <Route index element={<Navigate to="dashboard" />} />
+              <Route path="dashboard" element={<ClinicDashboard />} />
+              <Route path="appointments" element={<div>Clinic Bookings</div>} />
+              <Route path="clinics" element={<div>My Clinics</div>} />
+              <Route path="analytics" element={<div>Analytics</div>} />
+              <Route path="reviews" element={<div>Reviews</div>} />
+              <Route path="profile" element={<div>Owner Profile</div>} />
+            </Route>
+
+            {/* Admin Portal (Desktop Sidebar) */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Navigate to="dashboard" />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="approvals" element={<div>Pending Approvals</div>} />
+              <Route path="clinics" element={<div>Manage Clinics</div>} />
+              <Route path="users" element={<div>Manage Patients</div>} />
+              <Route path="analytics" element={<div>System Analytics</div>} />
+            </Route>
+
+            {/* 404 */}
+            <Route path="*" element={<div>404 Not Found</div>} />
+          </Routes>
+        </AnimatePresence>
+      </Router>
+      <Toaster position="top-center" />
+    </QueryClientProvider>
   );
 }
 
