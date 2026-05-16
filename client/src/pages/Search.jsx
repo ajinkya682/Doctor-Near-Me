@@ -39,8 +39,24 @@ const SearchPage = () => {
     // Request location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        () => setLocationStatus('granted'),
-        () => setLocationStatus('denied')
+        (pos) => {
+          setLocationStatus('granted');
+          console.log("Location granted:", pos.coords.latitude, pos.coords.longitude);
+        },
+        (error) => {
+          // code 1: PERMISSION_DENIED
+          // code 2: POSITION_UNAVAILABLE (This is what you're seeing: kCLErrorLocationUnknown)
+          // code 3: TIMEOUT
+          if (error.code === 1) {
+            setLocationStatus('denied');
+          } else {
+            // For unavailable/timeout, we still want to show results, 
+            // so we mark as 'granted' but maybe use a default city center
+            setLocationStatus('granted'); 
+            console.warn("Location unavailable, using fallback:", error.message);
+          }
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
     }
   }, []);
