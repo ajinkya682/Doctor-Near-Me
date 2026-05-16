@@ -182,8 +182,11 @@ const SearchPage = () => {
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="flex-grow relative bg-gray-100 dark:bg-gray-900"
             >
-               {/* Map Placeholder */}
-               <div className="absolute inset-0 bg-[url('https://maps.googleapis.com/maps/api/staticmap?center=18.5679,73.9144&zoom=14&size=600x1200&scale=2&key=YOUR_KEY')] bg-cover opacity-30 pointer-events-none" />
+               {/* Map Placeholder - High Fidelity */}
+               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=1000')] bg-cover bg-center opacity-40 grayscale-[0.5] contrast-[1.1] pointer-events-none" />
+               
+               {/* Grid Overlay for premium feel */}
+               <div className="absolute inset-0 bg-[radial-gradient(#0d9488_1px,transparent_1px)] [background-size:20px_20px] opacity-[0.05]" />
                
                {/* Custom Marker Placeholder */}
                <motion.div 
