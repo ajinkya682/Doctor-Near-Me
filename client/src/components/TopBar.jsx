@@ -20,7 +20,7 @@ const TopBar = () => {
   };
 
   return (
-    <div className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 h-16 flex items-center justify-between px-4">
+    <div className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 h-16 flex items-center justify-between px-4 transition-colors duration-500">
       <div className="flex items-center gap-3">
         {!isHome && (
           <button 
