@@ -15,6 +15,7 @@ import reviewRoutes from './routes/reviewRoutes.js';
 import clinicOwnerRoutes from './routes/clinicOwnerRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import webhookRoutes from './routes/webhookRoutes.js';
+import contactRoutes from './routes/contactRoutes.js';
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use('/api/clinic-owner', clinicOwnerRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/webhook', webhookRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {

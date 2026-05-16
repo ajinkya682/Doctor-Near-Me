@@ -27,7 +27,13 @@ import ClinicDoctors from './pages/clinic/Doctors';
 import ClinicProfile from './pages/clinic/Profile';
 import ClinicReviews from './pages/clinic/Reviews';
 import ClinicAnalytics from './pages/clinic/Analytics';
+import Contact from './pages/Contact';
+import PrivacyPolicy from './pages/legal/PrivacyPolicy';
+import Terms from './pages/legal/Terms';
+import RefundPolicy from './pages/legal/RefundPolicy';
 import ClinicLogin from './pages/ClinicLogin';
+import ClinicRegister from './pages/ClinicRegister';
+import ClinicPending from './pages/ClinicPending';
 
 const AdminDashboard = () => <div>Admin Dashboard</div>;
 
@@ -71,6 +77,10 @@ function App() {
               <Route path="appointments" element={<Appointments />} />
               <Route path="profile" element={<Profile />} />
               <Route path="notifications" element={<div>Notifications</div>} />
+              <Route path="contact" element={<Contact />} />
+              <Route path="privacy" element={<PrivacyPolicy />} />
+              <Route path="terms" element={<Terms />} />
+              <Route path="refund" element={<RefundPolicy />} />
             </Route>
 
             {/* Clinic Owner App (Responsive Sidebar) */}
