@@ -15,6 +15,9 @@ import AdminLayout from './layouts/AdminLayout';
 import Home from './pages/Home';
 import Search from './pages/Search';
 import Login from './pages/Login';
+import ClinicLogin from './pages/ClinicLogin';
+import ClinicRegister from './pages/ClinicRegister';
+
 const Appointments = () => <div>My Bookings</div>;
 const Profile = () => <div>Profile Page</div>;
 const ClinicDashboard = () => <div>Clinic Dashboard</div>;
@@ -45,8 +48,8 @@ function App() {
           <Routes>
             {/* Public Auth Routes */}
             <Route path="/login" element={<Login />} />
-            <Route path="/clinic/login" element={<Login />} />
-            <Route path="/clinic/register" element={<div>Register</div>} />
+            <Route path="/clinic/login" element={<ClinicLogin />} />
+            <Route path="/clinic/register" element={<ClinicRegister />} />
 
             {/* Patient App (480px Centered) */}
             <Route path="/" element={<PatientLayout />}>
