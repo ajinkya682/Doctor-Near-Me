@@ -1,23 +1,50 @@
-import http from "http";
-import app from "./src/app.js";
-import connectDB from "./src/config/db.js";
-import config from "./src/config/config.js";
-import { initSocket } from "./src/services/socket.service.js";
-import { initCronJobs } from "./src/services/cron.service.js";
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import helmet from 'helmet';
+import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 
-// Connect to Database
-connectDB();
+// Import Routes
+import patientAuthRoutes from './routes/patientAuthRoutes.js';
+import clinicAuthRoutes from './routes/clinicAuthRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
-const server = http.createServer(app);
+// Load environment variables
+dotenv.config();
 
-// Initialize Services
-initSocket(server);
-initCronJobs();
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-const PORT = config.port;
+// Middleware
+app.use(helmet());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true
+}));
+app.use(express.json());
+app.use(cookieParser());
 
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🔌 Socket.io initialized`);
-  console.log(`⏰ Cron jobs started`);
+// Routes
+app.use('/api/auth/patient', patientAuthRoutes);
+app.use('/api/auth/clinic', clinicAuthRoutes);
+app.use('/api/admin', adminRoutes);
+
+// Basic Route
+app.get('/', (req, res) => {
+  res.send('Doctor Near Me API is running...');
+});
+
+// Start Server
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+  
+  // Connect to Database
+  mongoose.connect(process.env.MONGODB_URI)
+    .then(() => {
+      console.log('Connected To Database');
+    })
+    .catch((err) => {
+      console.error('❌ MongoDB Connection Error:', err.message);
+    });
 });
