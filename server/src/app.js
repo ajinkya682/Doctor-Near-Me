@@ -14,6 +14,7 @@ import appointmentRoutes from './routes/appointmentRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import clinicOwnerRoutes from './routes/clinicOwnerRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import webhookRoutes from './routes/webhookRoutes.js';
 
 const app = express();
 
@@ -39,12 +40,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/clinic-owner', clinicOwnerRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/upload', uploadRoutes);
-
-// WhatsApp Webhook Placeholder
-app.post('/api/webhook/whatsapp', (req, res) => {
-  console.log('WhatsApp Webhook received:', req.body);
-  res.status(200).send('Webhook received');
-});
+app.use('/api/webhook', webhookRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {

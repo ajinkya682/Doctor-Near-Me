@@ -1,6 +1,7 @@
 import app from './src/app.js';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import './src/jobs/sessionCleanup.js';
 
 // Load environment variables
 dotenv.config();
