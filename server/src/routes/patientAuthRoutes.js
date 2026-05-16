@@ -1,6 +1,6 @@
 import express from 'express';
 import { sendOtp, verifyOtp, completeProfile, refreshToken, logout } from '../controllers/patientAuthController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { protect } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 

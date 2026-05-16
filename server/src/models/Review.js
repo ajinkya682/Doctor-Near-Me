@@ -1,44 +1,60 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const reviewSchema = new mongoose.Schema(
-  {
-    patient: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    doctor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Doctor",
-      required: true,
-    },
-    clinic: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Clinic",
-      required: true,
-    },
-    rating: {
-      type: Number,
-      required: true,
-      min: 1,
-      max: 5,
-    },
-    comment: {
-      type: String,
-      trim: true,
-      default: "",
-    },
-    appointment: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Appointment",
-      required: true,
-    },
+const ReviewSchema = new mongoose.Schema({
+  patientId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
   },
-  {
-    timestamps: true,
-  }
-);
+  doctorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Doctor',
+    required: true,
+  },
+  clinicId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Clinic',
+    required: true,
+  },
+  appointmentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Appointment',
+    required: true,
+    unique: true,
+  },
+  overallRating: {
+    type: Number,
+    min: 1,
+    max: 5,
+    required: true,
+  },
+  doctorRating: {
+    type: Number,
+    min: 1,
+    max: 5,
+  },
+  waitTimeRating: {
+    type: Number,
+    min: 1,
+    max: 5,
+  },
+  facilityRating: {
+    type: Number,
+    min: 1,
+    max: 5,
+  },
+  comment: String,
+  reply: String,
+  repliedAt: Date,
+  isVisible: {
+    type: Boolean,
+    default: true,
+  },
+  helpfulCount: {
+    type: Number,
+    default: 0,
+  },
+}, { timestamps: true });
 
-const reviewModel = mongoose.model("Review", reviewSchema);
-
-export default reviewModel;
+const Review = mongoose.model('Review', ReviewSchema);
+export default Review;

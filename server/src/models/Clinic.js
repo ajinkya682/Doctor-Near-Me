@@ -1,72 +1,100 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const clinicSchema = new mongoose.Schema(
-  {
-    name: {
+const DayScheduleSchema = new mongoose.Schema({
+  open: { type: Boolean, default: false },
+  startTime: { type: String, default: '09:00' },
+  endTime: { type: String, default: '21:00' },
+  breakStart: String,
+  breakEnd: String,
+}, { _id: false });
+
+const ClinicSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  slug: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  ownerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ClinicOwner',
+    required: true,
+  },
+  description: String,
+  specializations: [{
+    type: String,
+  }],
+  photos: [{
+    type: String, // Cloudinary URLs
+  }],
+  coverPhoto: String,
+  address: {
+    street: String,
+    city: String,
+    state: String,
+    pincode: String,
+    landmark: String,
+  },
+  location: {
+    type: {
       type: String,
+      enum: ['Point'],
+      default: 'Point',
+    },
+    coordinates: {
+      type: [Number], // [longitude, latitude]
       required: true,
-      trim: true,
-    },
-    address: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    location: {
-      type: {
-        type: String,
-        enum: ["Point"],
-        required: true,
-        default: "Point",
-      },
-      coordinates: {
-        type: [Number], // [longitude, latitude]
-        required: true,
-      },
-    },
-    phone: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    email: {
-      type: String,
-      trim: true,
-      lowercase: true,
-    },
-    openingHours: {
-      monday: { open: String, close: String },
-      tuesday: { open: String, close: String },
-      wednesday: { open: String, close: String },
-      thursday: { open: String, close: String },
-      friday: { open: String, close: String },
-      saturday: { open: String, close: String },
-      sunday: { open: String, close: String },
-    },
-    doctors: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Doctor",
-      },
-    ],
-    photos: [
-      {
-        type: String,
-      },
-    ],
-    isActive: {
-      type: Boolean,
-      default: true,
     },
   },
-  {
-    timestamps: true,
-  }
-);
+  phone: String,
+  alternatePhone: String,
+  email: String,
+  website: String,
+  openingHours: {
+    monday: DayScheduleSchema,
+    tuesday: DayScheduleSchema,
+    wednesday: DayScheduleSchema,
+    thursday: DayScheduleSchema,
+    friday: DayScheduleSchema,
+    saturday: DayScheduleSchema,
+    sunday: DayScheduleSchema,
+  },
+  holidays: [Date],
+  amenities: [String],
+  paymentMethods: [String],
+  averageRating: {
+    type: Number,
+    default: 0,
+  },
+  totalReviews: {
+    type: Number,
+    default: 0,
+  },
+  totalBookings: {
+    type: Number,
+    default: 0,
+  },
+  isVerifiedByAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+  isFeatured: {
+    type: Boolean,
+    default: false,
+  },
+}, { timestamps: true });
 
-// Geospatial index for location-based search
-clinicSchema.index({ location: "2dsphere" });
+// Indexes for performance and geolocation
+ClinicSchema.index({ location: '2dsphere' });
+ClinicSchema.index({ specializations: 1 });
+ClinicSchema.index({ averageRating: -1 });
 
-const clinicModel = mongoose.model("Clinic", clinicSchema);
-
-export default clinicModel;
+const Clinic = mongoose.model('Clinic', ClinicSchema);
+export default Clinic;

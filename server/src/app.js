@@ -1,38 +1,54 @@
-import express from "express";
-import cors from "cors";
-import helmet from "helmet";
-import config from "./config/config.js";
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 
-// Routes
-import authRoutes from "./routes/auth.routes.js";
-import clinicRoutes from "./routes/clinic.routes.js";
-import doctorRoutes from "./routes/doctor.routes.js";
-import appointmentRoutes from "./routes/appointment.routes.js";
-import webhookRoutes from "./routes/webhook.routes.js";
-import uploadRoutes from "./routes/upload.routes.js";
+// Import Routes
+import patientAuthRoutes from './routes/patientAuthRoutes.js';
+import clinicAuthRoutes from './routes/clinicAuthRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+import patientRoutes from './routes/patientRoutes.js';
+import clinicRoutes from './routes/clinicRoutes.js';
+import doctorRoutes from './routes/doctorRoutes.js';
+import appointmentRoutes from './routes/appointmentRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
+import clinicOwnerRoutes from './routes/clinicOwnerRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
 
 const app = express();
 
 // Middleware
 app.use(helmet());
-app.use(
-  cors({
-    origin: config.clientUrl,
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser());
 
-// API Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/clinics", clinicRoutes);
-app.use("/api/doctors", doctorRoutes);
-app.use("/api/appointments", appointmentRoutes);
-app.use("/api/webhook", webhookRoutes);
-app.use("/api/upload", uploadRoutes);
+// Auth Routes
+app.use('/api/auth/patient', patientAuthRoutes);
+app.use('/api/auth/clinic', clinicAuthRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Doctor Near Me API is running...");
+// Protected & Public Data Routes
+app.use('/api/patient', patientRoutes);
+app.use('/api/clinics', clinicRoutes);
+app.use('/api/doctors', doctorRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/clinic-owner', clinicOwnerRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/upload', uploadRoutes);
+
+// WhatsApp Webhook Placeholder
+app.post('/api/webhook/whatsapp', (req, res) => {
+  console.log('WhatsApp Webhook received:', req.body);
+  res.status(200).send('Webhook received');
+});
+
+// Basic Route
+app.get('/', (req, res) => {
+  res.send('Doctor Near Me API is running...');
 });
 
 export default app;

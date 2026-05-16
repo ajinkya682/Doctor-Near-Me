@@ -1,66 +1,85 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema(
-  {
-    phone: {
+const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  email: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  profilePhoto: {
+    type: String,
+    default: "",
+  },
+  dateOfBirth: {
+    type: Date,
+  },
+  gender: {
+    type: String,
+    enum: ['Male', 'Female', 'Other', 'Prefer not to say'],
+  },
+  bloodGroup: {
+    type: String,
+  },
+  address: {
+    street: String,
+    city: String,
+    state: String,
+    pincode: String,
+  },
+  location: {
+    type: {
       type: String,
-      required: true,
-      unique: true,
-      trim: true,
+      enum: ['Point'],
+      default: 'Point',
     },
-    name: {
-      type: String,
-      trim: true,
-    },
-    email: {
-      type: String,
-      trim: true,
-      lowercase: true,
-    },
-    profilePhoto: {
-      type: String,
-      default: "",
-    },
-    preferredLanguage: {
-      type: String,
-      enum: ["en", "hi", "mr", "gu"],
-      default: "en",
-    },
-    location: {
-      type: {
-        type: String,
-        enum: ["Point"],
-        default: "Point",
-      },
-      coordinates: {
-        type: [Number],
-        default: [0, 0],
-      },
-    },
-    bookings: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Appointment",
-      },
-    ],
-    role: {
-      type: String,
-      enum: ["patient", "admin"],
-      default: "patient",
-    },
-    isPhoneVerified: {
-      type: Boolean,
-      default: false,
+    coordinates: {
+      type: [Number], // [longitude, latitude]
     },
   },
-  {
-    timestamps: true,
-  }
-);
+  preferredLanguage: {
+    type: String,
+    enum: ['en', 'hi', 'mr', 'gu'],
+    default: 'en',
+  },
+  fcmToken: {
+    type: String,
+  },
+  savedClinics: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Clinic',
+  }],
+  bookingIds: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Appointment',
+  }],
+  isPhoneVerified: {
+    type: Boolean,
+    default: false,
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+  role: {
+    type: String,
+    default: 'patient',
+  },
+  refreshToken: {
+    type: String,
+  },
+}, { timestamps: true });
 
-// Index for location
-userSchema.index({ location: "2dsphere" });
+// Index for location search
+UserSchema.index({ location: '2dsphere' });
 
-const userModel = mongoose.model("User", userSchema);
-
-export default userModel;
+const User = mongoose.model('User', UserSchema);
+export default User;

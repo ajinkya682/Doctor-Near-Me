@@ -1,65 +1,46 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const whatsappSessionSchema = new mongoose.Schema(
-  {
-    phone: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
-    state: {
-      type: String,
-      enum: [
-        "GREETING",
-        "LANGUAGE_SELECTED",
-        "LOCATION_RECEIVED",
-        "SHOWING_RESULTS",
-        "BOOKING_SLOT",
-        "CONFIRMED",
-        "AWAITING_LANGUAGE",
-        "AWAITING_LOCATION",
-        "SELECTING_DOCTOR",
-        "SELECTING_DATE",
-        "SELECTING_SLOT",
-        "AWAITING_CONFIRMATION",
-      ],
-      default: "GREETING",
-    },
-    language: {
-      type: String,
-      enum: ["en", "hi", "mr", "gu"],
-      default: "en",
-    },
-    lastLocation: {
-      type: {
-        type: String,
-        enum: ["Point"],
-        default: "Point",
-      },
-      coordinates: {
-        type: [Number], // [longitude, latitude]
-        default: [0, 0],
-      },
-    },
-    selectedClinic: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Clinic",
-    },
-    selectedDoctor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Doctor",
-    },
-    lastActive: {
-      type: Date,
-      default: Date.now,
-    },
+const WhatsappSessionSchema = new mongoose.Schema({
+  phone: {
+    type: String,
+    required: true,
+    unique: true,
   },
-  {
-    timestamps: true,
-  }
-);
+  state: {
+    type: String,
+    required: true,
+    default: 'IDLE',
+  },
+  language: {
+    type: String,
+    enum: ['en', 'hi', 'mr', 'gu'],
+  },
+  location: {
+    lat: Number,
+    lng: Number,
+  },
+  selectedClinicId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Clinic',
+  },
+  selectedDoctorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Doctor',
+  },
+  selectedDate: Date,
+  selectedSlot: String,
+  tentativeBookingData: {
+    type: Object,
+  },
+  lastActivityAt: {
+    type: Date,
+    default: Date.now,
+  },
+  messageCount: {
+    type: Number,
+    default: 0,
+  },
+}, { timestamps: true });
 
-const whatsappSessionModel = mongoose.model("WhatsappSession", whatsappSessionSchema);
-
-export default whatsappSessionModel;
+const WhatsappSession = mongoose.model('WhatsappSession', WhatsappSessionSchema);
+export default WhatsappSession;
