@@ -1,158 +1,152 @@
-import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Star, Calendar, Clock, ShieldCheck, Heart, CheckCircle2 } from "lucide-react";
-import { motion } from "framer-motion";
-import { format, addDays, startOfToday } from "date-fns";
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { 
+  ChevronLeft, Star, MapPin, Clock, ShieldCheck, 
+  Award, GraduationCap, Calendar, MessageCircle, MoreVertical
+} from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import api from '../api/axios';
+import { useAuthStore } from '../store/useStore';
 
-const DEMO_DOCTOR = {
-  id: "d1",
-  name: "Dr. Sarah Johnson",
-  specialty: "Cardiologist",
-  rating: 4.9,
-  reviews: 245,
-  experience: "12+ years",
-  patients: "5k+",
-  fee: "$50",
-  image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600",
-  about: "Dr. Sarah Johnson is a world-class cardiologist with over 12 years of experience in treating complex heart conditions. She specialized in preventative cardiology and cardiovascular imaging.",
-  slots: ["09:00 AM", "10:30 AM", "11:00 AM", "01:30 PM", "04:00 PM"]
-};
-
-export default function DoctorProfile() {
+const DoctorProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const doctor = DEMO_DOCTOR;
+  const { user } = useAuthStore();
 
-  const [selectedDateIdx, setSelectedDateIdx] = useState(0);
-  const [selectedSlot, setSelectedSlot] = useState("");
-
-  const today = startOfToday();
-  const nextDays = Array.from({ length: 8 }).map((_, i) => addDays(today, i));
-  const currentMonthYear = format(today, "MMMM yyyy");
-
-  const handleBook = () => {
-    if (!selectedSlot) {
-      alert("Please select a time slot first!");
-      return;
+  // Fetch Real Doctor Data
+  const { data: doctor, isLoading } = useQuery({
+    queryKey: ['doctor', id],
+    queryFn: async () => {
+      const res = await api.get(`/doctors/${id}`);
+      return res.data;
     }
-    navigate("/booking-confirm", {
-      state: {
-        doctor,
-        date: nextDays[selectedDateIdx].toISOString(),
-        slot: selectedSlot
-      }
-    });
-  };
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
+        <div className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!doctor) return <div>Doctor not found</div>;
 
   return (
-    <div className="flex flex-col min-h-full bg-white dark:bg-zinc-900 pb-10">
+    <div className="bg-white dark:bg-black min-h-screen pb-32">
       {/* Header */}
-      <div className="px-6 pt-6 flex justify-between items-center bg-zinc-50 dark:bg-zinc-800/30 pb-10">
-        <button onClick={() => navigate(-1)} className="p-2 bg-white dark:bg-zinc-800 rounded-full shadow-sm text-zinc-900 dark:text-zinc-100">
-          <ArrowLeft size={24} />
-        </button>
-        <h1 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">Doctor Profile</h1>
-        <button className="p-2 bg-white dark:bg-zinc-800 rounded-full shadow-sm text-zinc-900 dark:text-zinc-100">
-          <Heart size={24} />
-        </button>
-      </div>
+      <header className="p-6 flex items-center justify-between sticky top-0 bg-white/80 dark:bg-black/80 backdrop-blur-xl z-20">
+        <button onClick={() => navigate(-1)} className="w-10 h-10 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center text-gray-900 dark:text-white border border-gray-100 dark:border-gray-800"><ChevronLeft size={24} /></button>
+        <h2 className="font-black text-gray-900 dark:text-white uppercase tracking-widest text-xs">Doctor Profile</h2>
+        <button className="w-10 h-10 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center text-gray-900 dark:text-white border border-gray-100 dark:border-gray-800"><MoreVertical size={20} /></button>
+      </header>
 
-      {/* Profile Card */}
-      <div className="px-6 -mt-6">
-        <div className="card-premium p-6 flex flex-col items-center text-center space-y-4">
-          <div className="relative">
-            <img src={doctor.image} className="w-28 h-28 rounded-3xl object-cover border-4 border-white dark:border-zinc-800 shadow-xl" alt="" />
-            <div className="absolute -bottom-2 -right-2 bg-emerald-500 p-1.5 rounded-full border-4 border-white dark:border-zinc-800">
-              <ShieldCheck size={16} className="text-white" />
+      {/* Profile Hero */}
+      <section className="px-6 pt-2">
+         <div className="bg-gradient-to-br from-teal-500 to-teal-700 rounded-[40px] p-8 text-white relative overflow-hidden shadow-2xl shadow-teal-500/20">
+            <div className="flex flex-col items-center relative z-10">
+               <div className="relative mb-4">
+                  <img src={doctor.profilePhoto} className="w-28 h-28 rounded-3xl object-cover border-4 border-white/20 shadow-xl" alt={doctor.name} />
+                  <div className="absolute -bottom-2 -right-2 bg-white text-teal-600 p-1.5 rounded-xl shadow-lg">
+                     <ShieldCheck size={18} fill="currentColor" className="text-teal-600/20" />
+                  </div>
+               </div>
+               <h1 className="text-2xl font-black">{doctor.name}</h1>
+               <p className="text-white/80 text-sm font-bold uppercase tracking-widest mt-1">{doctor.specialization}</p>
+               
+               <div className="flex gap-4 mt-6">
+                  <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10 text-center">
+                     <p className="text-xs font-bold opacity-70">Experience</p>
+                     <p className="text-sm font-black">{doctor.experience}Y+</p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10 text-center">
+                     <p className="text-xs font-bold opacity-70">Patients</p>
+                     <p className="text-sm font-black">2.5K+</p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10 text-center">
+                     <p className="text-xs font-bold opacity-70">Rating</p>
+                     <p className="text-sm font-black flex items-center gap-1"><Star size={12} fill="currentColor" /> {doctor.averageRating}</p>
+                  </div>
+               </div>
             </div>
-          </div>
-          <div>
-            <h2 className="text-xl font-black text-zinc-900 dark:text-zinc-100">{doctor.name}</h2>
-            <p className="text-sm font-medium text-primary-600 dark:text-primary-400">{doctor.specialty}</p>
-          </div>
-          
-          <div className="grid grid-cols-3 gap-8 w-full py-4 border-y border-zinc-100 dark:border-zinc-800">
-            <div className="flex flex-col items-center">
-              <span className="text-xs text-zinc-400 font-medium">Patients</span>
-              <span className="text-sm font-black text-zinc-900 dark:text-zinc-100">{doctor.patients}</span>
-            </div>
-            <div className="flex flex-col items-center border-x border-zinc-100 dark:border-zinc-800">
-              <span className="text-xs text-zinc-400 font-medium">Exp.</span>
-              <span className="text-sm font-black text-zinc-900 dark:text-zinc-100">{doctor.experience}</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-xs text-zinc-400 font-medium">Rating</span>
-              <span className="text-sm font-black text-zinc-900 dark:text-zinc-100">{doctor.rating}</span>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* About Section */}
-      <div className="px-6 mt-8 space-y-3">
-        <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">About Doctor</h3>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
-          {doctor.about}
-        </p>
-      </div>
+            {/* Decorative circles */}
+            <div className="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
+            <div className="absolute -bottom-20 -right-10 w-60 h-60 bg-teal-400/20 rounded-full blur-3xl" />
+         </div>
+      </section>
 
-      {/* Availability Section */}
-      <div className="px-6 mt-8 space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">Select Date</h3>
-          <span className="text-xs text-primary-600 font-bold uppercase tracking-widest">{currentMonthYear}</span>
-        </div>
-        
-        <div className="flex space-x-3 overflow-x-auto no-scrollbar pb-2">
-          {nextDays.map((date, index) => {
-            const isSelected = selectedDateIdx === index;
-            return (
-              <motion.div 
-                whileTap={{ scale: 0.95 }}
-                key={index} 
-                onClick={() => setSelectedDateIdx(index)}
-                className={`shrink-0 w-14 h-20 rounded-2xl flex flex-col items-center justify-center space-y-1 cursor-pointer transition-all ${isSelected ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500'}`}
-              >
-                <span className={`text-[10px] font-bold uppercase ${isSelected ? 'text-white' : 'text-zinc-400'}`}>
-                  {format(date, "EEE")}
-                </span>
-                <span className="text-lg font-black">{format(date, "d")}</span>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
+      {/* Info Sections */}
+      <section className="p-6 space-y-8">
+         {/* Bio */}
+         <div className="space-y-3">
+            <h3 className="font-black text-gray-900 dark:text-white flex items-center gap-2">
+               <Award size={18} className="text-teal-500" /> About Doctor
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed font-medium">
+               {doctor.bio || `Dr. ${doctor.name} is a highly skilled ${doctor.specialization} specialist with over ${doctor.experience} years of experience in providing exceptional healthcare.`}
+            </p>
+         </div>
 
-      {/* Time Slots */}
-      <div className="px-6 mt-8 space-y-4">
-        <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">Available Slots</h3>
-        <div className="grid grid-cols-3 gap-3">
-          {doctor.slots.map((slot) => (
-            <button
-              key={slot}
-              onClick={() => setSelectedSlot(slot)}
-              className={`py-3 px-2 rounded-xl text-xs font-bold transition-all border-2 ${
-                selectedSlot === slot 
-                ? "bg-primary-50 border-primary-600 text-primary-600 dark:bg-primary-950/30" 
-                : "bg-white dark:bg-zinc-800 border-zinc-100 dark:border-zinc-700 text-zinc-500"
-              }`}
-            >
-              {slot}
+         {/* Qualifications */}
+         <div className="space-y-4">
+            <h3 className="font-black text-gray-900 dark:text-white flex items-center gap-2">
+               <GraduationCap size={18} className="text-teal-500" /> Qualifications
+            </h3>
+            <div className="space-y-3">
+               {doctor.qualifications?.length > 0 ? doctor.qualifications.map((q, i) => (
+                 <div key={i} className="flex gap-3 bg-gray-50 dark:bg-gray-900 p-4 rounded-2xl border border-gray-100 dark:border-gray-800">
+                    <div className="w-10 h-10 bg-teal-50 dark:bg-teal-900/30 rounded-xl flex items-center justify-center text-teal-600 font-black text-xs uppercase tracking-tighter">
+                       {q.degree.slice(0, 3)}
+                    </div>
+                    <div>
+                       <h4 className="text-sm font-black text-gray-900 dark:text-white">{q.degree}</h4>
+                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{q.institute} • {q.year}</p>
+                    </div>
+                 </div>
+               )) : (
+                 <p className="text-sm text-gray-400">MD in {doctor.specialization} from AIIMS Delhi</p>
+               )}
+            </div>
+         </div>
+
+         {/* Working Hours */}
+         <div className="space-y-3">
+            <h3 className="font-black text-gray-900 dark:text-white flex items-center gap-2">
+               <Clock size={18} className="text-teal-500" /> Working Hours
+            </h3>
+            <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-[32px] border border-gray-100 dark:border-gray-800">
+               <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Mon - Fri</p>
+                     <p className="text-xs font-black text-gray-900 dark:text-white">09:00 AM - 18:00 PM</p>
+                  </div>
+                  <div className="space-y-1">
+                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Saturday</p>
+                     <p className="text-xs font-black text-gray-900 dark:text-white">10:00 AM - 14:00 PM</p>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      {/* Sticky Booking Button */}
+      <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-white via-white/90 to-transparent dark:from-black dark:via-black/90 z-30">
+         <div className="max-w-[480px] mx-auto flex gap-4">
+            <button className="w-16 h-16 bg-gray-100 dark:bg-gray-900 rounded-3xl flex items-center justify-center text-teal-600 border border-gray-200 dark:border-gray-800">
+               <MessageCircle size={24} />
             </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Integrated Action Button */}
-      <div className="px-6 mt-10 pb-4">
-        <button 
-          onClick={handleBook}
-          className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-black shadow-xl shadow-primary-500/20 active:scale-95 transition-all flex items-center justify-center space-x-3"
-        >
-          <Calendar size={20} />
-          <span>Book Appointment</span>
-        </button>
+            <button 
+              onClick={() => navigate(`/doctors/${id}/book`)}
+              className="flex-grow bg-teal-600 text-white font-black text-lg rounded-3xl shadow-2xl shadow-teal-500/30 flex items-center justify-center gap-3 active:scale-95 transition-transform"
+            >
+               <Calendar size={20} /> Book Appointment
+            </button>
+         </div>
       </div>
     </div>
   );
-}
+};
+
+export default DoctorProfile;

@@ -5,9 +5,16 @@ import { generateAccessToken, generateRefreshToken, verifyToken } from '../utils
 
 export const sendOtp = async (req, res) => {
   try {
-    const { phone } = req.body;
-    if (!phone || phone.length !== 10) {
-      return res.status(400).json({ message: 'Phone number must be exactly 10 digits' });
+    let { phone } = req.body;
+    if (!phone) return res.status(400).json({ message: 'Phone number is required' });
+
+    // Normalize: Remove spaces/dashes, ensure it has +91 if it's a 10-digit Indian number
+    phone = phone.replace(/\s+/g, '');
+    if (phone.length === 10) phone = `+91${phone}`;
+
+    // Validate: Should be +91 followed by 10 digits (Total 13)
+    if (!/^\+91\d{10}$/.test(phone)) {
+      return res.status(400).json({ message: 'Invalid Indian phone number. Must be 10 digits.' });
     }
 
     await sendOTP(phone);
@@ -19,22 +26,27 @@ export const sendOtp = async (req, res) => {
 
 export const verifyOtp = async (req, res) => {
   try {
-    const { phone, code } = req.body;
-    if (!phone || !code) {
-      return res.status(400).json({ message: 'Phone and code are required' });
+    const { phone, otp, code } = req.body;
+    const verificationCode = otp || code;
+
+    if (!phone || !verificationCode) {
+      return res.status(400).json({ message: 'Phone and OTP code are required' });
     }
 
-    const verificationCheck = await verifyOTP(phone, code);
+    let normalizedPhone = phone.replace(/\s+/g, '');
+    if (normalizedPhone.length === 10) normalizedPhone = `+91${normalizedPhone}`;
+
+    const verificationCheck = await verifyOTP(normalizedPhone, verificationCode);
 
     if (verificationCheck.status !== 'approved') {
       return res.status(400).json({ message: 'Invalid or expired OTP' });
     }
 
-    let user = await User.findOne({ phone });
+    let user = await User.findOne({ phone: normalizedPhone });
     let isNewUser = false;
 
     if (!user) {
-      user = new User({ phone, isPhoneVerified: true });
+      user = new User({ phone: normalizedPhone, isPhoneVerified: true });
       isNewUser = true;
     } else {
       user.isPhoneVerified = true;
@@ -69,7 +81,9 @@ export const verifyOtp = async (req, res) => {
 
 export const completeProfile = async (req, res) => {
   try {
-    const { name, email, dateOfBirth, gender } = req.body;
+    const { name, email, dateOfBirth, dob, gender } = req.body;
+    const finalDOB = dateOfBirth || dob;
+
     if (!name) return res.status(400).json({ message: 'Name is required' });
 
     const user = await User.findById(req.user.id);
@@ -77,7 +91,7 @@ export const completeProfile = async (req, res) => {
 
     user.name = name;
     if (email) user.email = email;
-    if (dateOfBirth) user.dateOfBirth = dateOfBirth;
+    if (finalDOB) user.dateOfBirth = finalDOB;
     if (gender) user.gender = gender;
 
     await user.save();

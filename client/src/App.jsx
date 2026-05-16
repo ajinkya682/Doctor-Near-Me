@@ -16,13 +16,19 @@ import Home from './pages/Home';
 import Search from './pages/Search';
 import Login from './pages/Login';
 import ClinicDetail from './pages/ClinicDetail';
+import DoctorProfile from './pages/DoctorProfile';
+import Booking from './pages/Booking';
+import BookingSuccess from './pages/BookingSuccess';
+import Appointments from './pages/Appointments';
+import Profile from './pages/Profile';
+import ClinicDashboard from './pages/clinic/Dashboard';
+import ClinicAppointments from './pages/clinic/Appointments';
+import ClinicDoctors from './pages/clinic/Doctors';
+import ClinicProfile from './pages/clinic/Profile';
+import ClinicReviews from './pages/clinic/Reviews';
+import ClinicAnalytics from './pages/clinic/Analytics';
 import ClinicLogin from './pages/ClinicLogin';
-import ClinicRegister from './pages/ClinicRegister';
-import ClinicPending from './pages/ClinicPending';
 
-const Appointments = () => <div>My Bookings</div>;
-const Profile = () => <div>Profile Page</div>;
-const ClinicDashboard = () => <div>Clinic Dashboard</div>;
 const AdminDashboard = () => <div>Admin Dashboard</div>;
 
 const queryClient = new QueryClient();
@@ -59,10 +65,11 @@ function App() {
               <Route index element={<Home />} />
               <Route path="search" element={<Search />} />
               <Route path="clinics/:id" element={<ClinicDetail />} />
+              <Route path="doctors/:id" element={<DoctorProfile />} />
+              <Route path="doctors/:id/book" element={<Booking />} />
+              <Route path="booking-success/:id" element={<BookingSuccess />} />
               <Route path="appointments" element={<Appointments />} />
               <Route path="profile" element={<Profile />} />
-              <Route path="clinics/:slug" element={<div>Clinic Detail</div>} />
-              <Route path="doctors/:id" element={<div>Doctor Profile</div>} />
               <Route path="notifications" element={<div>Notifications</div>} />
             </Route>
 
@@ -70,11 +77,11 @@ function App() {
             <Route path="/clinic" element={<ClinicOwnerLayout />}>
               <Route index element={<Navigate to="dashboard" />} />
               <Route path="dashboard" element={<ClinicDashboard />} />
-              <Route path="appointments" element={<div>Clinic Bookings</div>} />
-              <Route path="clinics" element={<div>My Clinics</div>} />
-              <Route path="analytics" element={<div>Analytics</div>} />
-              <Route path="reviews" element={<div>Reviews</div>} />
-              <Route path="profile" element={<div>Owner Profile</div>} />
+              <Route path="appointments" element={<ClinicAppointments />} />
+              <Route path="clinics" element={<ClinicDoctors />} />
+              <Route path="analytics" element={<ClinicAnalytics />} />
+              <Route path="reviews" element={<ClinicReviews />} />
+              <Route path="profile" element={<ClinicProfile />} />
             </Route>
 
             {/* Admin Portal (Desktop Sidebar) */}
