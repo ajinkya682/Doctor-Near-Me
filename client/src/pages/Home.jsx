@@ -20,19 +20,33 @@ const categories = [
   { id: '8', name: 'Dermatology', icon: '🧴' },
 ];
 
+import { useQuery } from '@tanstack/react-query';
+import api from '../api/axios';
+
 const Home = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const [greeting, setGreeting] = useState('');
   const [hasLocation, setHasLocation] = useState(false);
-  const [upcomingAppointment, setUpcomingAppointment] = useState({
-    doctorName: 'Dr. Priya Sharma',
-    specialty: 'Cardiologist',
-    clinicName: 'City Care Clinic',
-    time: '10:30 AM',
-    date: '18 May 2026',
-    doctorPhoto: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=200'
+
+  // Real Data Fetching
+  const { data: clinics = [] } = useQuery({
+    queryKey: ['clinics-nearby'],
+    queryFn: async () => {
+      const res = await api.get('/clinics?limit=5');
+      return res.data.data || [];
+    }
   });
+
+  const { data: doctors = [] } = useQuery({
+    queryKey: ['doctors-top'],
+    queryFn: async () => {
+      const res = await api.get('/doctors?limit=3&sort=rating');
+      return res.data.data || [];
+    }
+  });
+
+  const [upcomingAppointment, setUpcomingAppointment] = useState(null);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -170,27 +184,28 @@ const Home = () => {
           </div>
         ) : (
           <div className="flex gap-4 overflow-x-auto no-scrollbar py-2">
-            {[1, 2].map(i => (
+            {clinics.map(clinic => (
               <motion.div 
-                key={i}
+                key={clinic._id}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => navigate('/clinics/123')}
+                onClick={() => navigate(`/clinics/${clinic._id}`)}
                 className="min-w-[220px] bg-white dark:bg-gray-800 rounded-[28px] overflow-hidden shadow-xl shadow-black/5 border border-gray-100 dark:border-gray-800"
               >
                 <div className="h-28 relative">
-                   <img src={`https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=300`} className="w-full h-full object-cover" alt="Clinic" />
+                   <img src={clinic.coverImage || `https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=300`} className="w-full h-full object-cover" alt="Clinic" />
                    <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1 text-[10px] font-black text-teal-600">
-                      <Star size={12} fill="currentColor" /> 4.8
+                      <Star size={12} fill="currentColor" /> {clinic.rating || '4.5'}
                    </div>
                 </div>
                 <div className="p-4">
-                  <h4 className="font-black text-sm text-gray-900 dark:text-white truncate">City Care Clinic</h4>
+                  <h4 className="font-black text-sm text-gray-900 dark:text-white truncate">{clinic.name}</h4>
                   <div className="flex gap-1 mt-2">
-                     <span className="text-[9px] bg-gray-50 dark:bg-gray-900 text-gray-400 px-2 py-0.5 rounded-full font-bold uppercase">Dental</span>
-                     <span className="text-[9px] bg-gray-50 dark:bg-gray-900 text-gray-400 px-2 py-0.5 rounded-full font-bold uppercase">Skin</span>
+                     {clinic.specialties?.slice(0, 2).map(spec => (
+                       <span key={spec} className="text-[9px] bg-gray-50 dark:bg-gray-900 text-gray-400 px-2 py-0.5 rounded-full font-bold uppercase">{spec}</span>
+                     ))}
                   </div>
                   <div className="flex items-center justify-between mt-3 text-teal-600 dark:text-teal-400">
-                     <span className="text-[10px] font-black uppercase tracking-widest">0.8 KM AWAY</span>
+                     <span className="text-[10px] font-black uppercase tracking-widest">NEARBY</span>
                      <ChevronRight size={14} />
                   </div>
                 </div>
@@ -206,23 +221,23 @@ const Home = () => {
           <h3 className="text-lg font-black text-gray-900 dark:text-white">Top Rated Doctors Near You</h3>
         </div>
         <div className="space-y-4">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="bg-white dark:bg-gray-800 rounded-[28px] p-4 flex gap-4 border border-gray-50 dark:border-gray-800 shadow-sm">
-               <img src={`https://i.pravatar.cc/150?u=${i}`} className="w-20 h-20 rounded-2xl object-cover shadow-md" alt="Doc" />
+          {doctors.map(doc => (
+            <div key={doc._id} className="bg-white dark:bg-gray-800 rounded-[28px] p-4 flex gap-4 border border-gray-50 dark:border-gray-800 shadow-sm">
+               <img src={doc.photo || `https://i.pravatar.cc/150?u=${doc._id}`} className="w-20 h-20 rounded-2xl object-cover shadow-md" alt="Doc" />
                <div className="flex-grow flex flex-col justify-between">
                   <div>
                     <div className="flex justify-between">
-                      <h4 className="font-black text-gray-900 dark:text-white">Dr. Sarah Johnson</h4>
+                      <h4 className="font-black text-gray-900 dark:text-white">{doc.name}</h4>
                       <div className="flex items-center gap-0.5 text-orange-400 font-black text-[10px]">
-                        <Star size={10} fill="currentColor" /> 4.9
+                        <Star size={10} fill="currentColor" /> {doc.rating || '4.9'}
                       </div>
                     </div>
-                    <p className="text-xs text-gray-500 font-bold uppercase">Gynecologist • 12Y Exp</p>
+                    <p className="text-xs text-gray-500 font-bold uppercase">{doc.specialty} • {doc.experience}Y Exp</p>
                   </div>
                   <div className="flex items-center justify-between mt-2">
-                     <span className="text-sm font-black text-gray-900 dark:text-white">₹ 800 <span className="text-[10px] text-gray-400 font-medium">/visit</span></span>
+                     <span className="text-sm font-black text-gray-900 dark:text-white">₹ {doc.fees} <span className="text-[10px] text-gray-400 font-medium">/visit</span></span>
                      <button 
-                      onClick={() => navigate('/doctors/123')}
+                      onClick={() => navigate(`/doctors/${doc._id}`)}
                       className="bg-teal-600 text-white px-6 py-1.5 rounded-full text-xs font-black shadow-lg shadow-teal-500/20 active:scale-95"
                      >
                         Book

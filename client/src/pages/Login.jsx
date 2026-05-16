@@ -4,6 +4,7 @@ import { ChevronLeft, CheckCircle2, Loader2, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/useStore';
+import api from '../api/axios';
 
 const Login = () => {
   const [step, setStep] = useState('PHONE'); // PHONE, OTP, PROFILE
@@ -30,12 +31,11 @@ const Login = () => {
     if (phone.length !== 10) return;
     setLoading(true);
     try {
-      // Mock API call
-      await new Promise(r => setTimeout(r, 1500));
+      await api.post('/auth/patient/send-otp', { phone: `+91${phone}` });
       toast.success('OTP sent successfully!');
       setStep('OTP');
     } catch (err) {
-      toast.error('Failed to send OTP');
+      toast.error(err.response?.data?.message || 'Failed to send OTP');
     } finally {
       setLoading(false);
     }
@@ -44,18 +44,24 @@ const Login = () => {
   const handleVerifyOtp = async (finalOtp) => {
     setLoading(true);
     try {
-      // Mock API call
-      await new Promise(r => setTimeout(r, 1500));
-      // In real app, check if user is new or existing
-      const isNewUser = true; 
+      const res = await api.post('/auth/patient/verify-otp', { 
+        phone: `+91${phone}`, 
+        otp: finalOtp 
+      });
+      
+      const { user, token, isNewUser } = res.data;
+      
       if (isNewUser) {
+        // Save token temporarily to complete profile
+        setAuth(user, token, 'patient');
         setStep('PROFILE');
       } else {
-        setAuth({ name: 'Existing User', phone }, 'mock-token', 'patient');
+        setAuth(user, token, 'patient');
+        toast.success('Welcome back!');
         navigate('/');
       }
     } catch (err) {
-      toast.error('Invalid OTP');
+      toast.error(err.response?.data?.message || 'Invalid OTP');
     } finally {
       setLoading(false);
     }
@@ -65,12 +71,12 @@ const Login = () => {
     if (!profileData.name) return;
     setLoading(true);
     try {
-      await new Promise(r => setTimeout(r, 1000));
-      setAuth({ ...profileData, phone }, 'mock-token', 'patient');
+      const res = await api.patch('/auth/patient/complete-profile', profileData);
+      setAuth(res.data.user, res.data.token || useAuthStore.getState().token, 'patient');
       toast.success('Profile completed!');
       navigate('/');
     } catch (err) {
-      toast.error('Something went wrong');
+      toast.error(err.response?.data?.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }

@@ -7,6 +7,9 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import { useQuery } from '@tanstack/react-query';
+import api from '../api/axios';
+
 const SearchPage = () => {
   const navigate = useNavigate();
   const searchInputRef = useRef(null);
@@ -14,23 +17,18 @@ const SearchPage = () => {
   const [query, setQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [showAutocomplete, setShowAutocomplete] = useState(false);
-  const [locationStatus, setLocationStatus] = useState('requesting'); // requesting, granted, denied
-  const [selectedClinic, setSelectedClinic] = useState(null); // For map preview
+  const [locationStatus, setLocationStatus] = useState('requesting'); 
+  const [selectedClinic, setSelectedClinic] = useState(null); 
 
-  const clinics = [
-    { 
-      id: '1', name: 'City Care Clinic', address: 'Viman Nagar, Pune', 
-      specialties: ['General', 'Cardiology'], rating: 4.8, distance: '0.8 km', 
-      isOpen: true, image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=400',
-      doctors: [{ name: 'Dr. Sharma', spec: 'Cardiology' }, { name: 'Dr. Mehta', spec: 'General' }]
+  // Real Search Query
+  const { data: clinics = [], isLoading } = useQuery({
+    queryKey: ['clinics-search', query],
+    queryFn: async () => {
+      const res = await api.get(`/clinics?search=${query}`);
+      return res.data.data || [];
     },
-    { 
-      id: '2', name: 'Smile Dental Hub', address: 'Kalyani Nagar, Pune', 
-      specialties: ['Dental', 'Ortho'], rating: 4.9, distance: '1.2 km', 
-      isOpen: false, image: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=400',
-      doctors: [{ name: 'Dr. Rahul', spec: 'Dentist' }]
-    }
-  ];
+    enabled: true
+  });
 
   useEffect(() => {
     // Focus search input on load
@@ -135,15 +133,20 @@ const SearchPage = () => {
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="flex-grow overflow-y-auto px-4 pb-24 space-y-6"
             >
-              {clinics.map(clinic => (
-                <div key={clinic.id} className="space-y-3">
+              {isLoading ? (
+                <div className="flex flex-col items-center justify-center py-20 gap-4">
+                   <Loader2 className="animate-spin text-teal-600" size={32} />
+                   <p className="text-sm font-bold text-gray-500">Searching clinics...</p>
+                </div>
+              ) : clinics.map(clinic => (
+                <div key={clinic._id} className="space-y-3">
                   <motion.div 
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => navigate(`/clinics/${clinic.id}`)}
+                    onClick={() => navigate(`/clinics/${clinic._id}`)}
                     className="bg-white dark:bg-gray-900 rounded-[32px] overflow-hidden border border-gray-100 dark:border-gray-800 shadow-xl shadow-black/5 flex h-32"
                   >
                     <div className="w-32 relative overflow-hidden">
-                       <img src={clinic.image} className="w-full h-full object-cover" alt={clinic.name} />
+                       <img src={clinic.coverImage || `https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=400`} className="w-full h-full object-cover" alt={clinic.name} />
                        {clinic.isOpen ? (
                          <div className="absolute top-2 left-2 bg-green-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase">Open</div>
                        ) : (
@@ -155,11 +158,11 @@ const SearchPage = () => {
                           <div className="flex justify-between items-start">
                              <h4 className="font-black text-gray-900 dark:text-white leading-tight">{clinic.name}</h4>
                              <div className="flex items-center gap-0.5 text-orange-400 font-black text-xs">
-                                <Star size={12} fill="currentColor" /> {clinic.rating}
+                                <Star size={12} fill="currentColor" /> {clinic.rating || '4.5'}
                              </div>
                           </div>
                           <p className="text-[10px] text-gray-500 font-bold flex items-center gap-1 mt-1">
-                             <MapPin size={10} /> {clinic.distance} away • {clinic.address}
+                             <MapPin size={10} /> {clinic.distance || '1.2km'} away • {clinic.address}
                           </p>
                        </div>
                        <button className="self-end bg-teal-600 text-white px-5 py-1.5 rounded-xl text-[10px] font-black uppercase">View</button>
@@ -167,9 +170,9 @@ const SearchPage = () => {
                   </motion.div>
                   {/* Doctor Chips */}
                   <div className="flex gap-2 overflow-x-auto no-scrollbar pl-4">
-                    {clinic.doctors.map((doc, idx) => (
+                    {clinic.doctors?.map((doc, idx) => (
                       <span key={idx} className="whitespace-nowrap text-[9px] font-bold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 px-3 py-1 rounded-full border border-gray-100 dark:border-gray-700">
-                        {doc.name} ({doc.spec})
+                        {doc.name} ({doc.specialty})
                       </span>
                     ))}
                   </div>

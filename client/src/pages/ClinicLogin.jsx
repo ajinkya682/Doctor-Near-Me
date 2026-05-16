@@ -4,6 +4,7 @@ import { Mail, Lock, ArrowRight, Loader2, Hospital } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/useStore';
+import api from '../api/axios';
 
 const ClinicLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -12,14 +13,19 @@ const ClinicLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const email = e.target[0].value;
+    const password = e.target[1].value;
+    
     setLoading(true);
     try {
-      await new Promise(r => setTimeout(r, 1500));
-      setAuth({ name: 'Clinic Owner', email: 'owner@test.com' }, 'mock-token', 'owner');
+      const res = await api.post('/auth/clinic/login', { email, password });
+      const { user, token } = res.data;
+      
+      setAuth(user, token, 'owner');
       toast.success('Welcome back!');
       navigate('/clinic/dashboard');
     } catch (err) {
-      toast.error('Invalid credentials');
+      toast.error(err.response?.data?.message || 'Invalid credentials');
     } finally {
       setLoading(false);
     }

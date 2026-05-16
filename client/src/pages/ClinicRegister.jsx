@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Users, ShieldCheck, BarChart3, ArrowRight, Loader2, Upload, X, MailOpen } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import api from '../api/axios';
 
 const ClinicRegister = () => {
   const [loading, setLoading] = useState(false);
@@ -28,13 +29,22 @@ const ClinicRegister = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(r => setTimeout(r, 2000));
+      // Create actual FormData for files
+      const finalData = new FormData();
+      Object.keys(data).forEach(key => finalData.append(key, data[key]));
+      files.forEach(file => finalData.append('documents', file));
+
+      await api.post('/auth/clinic/register', finalData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       setIsSuccess(true);
     } catch (err) {
-      toast.error('Registration failed');
+      toast.error(err.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -100,23 +110,23 @@ const ClinicRegister = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Full Name</label>
-                <input required type="text" placeholder="Dr. Jane Smith" className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-teal-500 rounded-2xl py-4 px-6 font-bold outline-none transition-all dark:text-white" />
+                <input name="fullName" required type="text" placeholder="Dr. Jane Smith" className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-teal-500 rounded-2xl py-4 px-6 font-bold outline-none transition-all dark:text-white" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Work Email</label>
-                <input required type="email" placeholder="jane@clinic.com" className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-teal-500 rounded-2xl py-4 px-6 font-bold outline-none transition-all dark:text-white" />
+                <input name="email" required type="email" placeholder="jane@clinic.com" className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-teal-500 rounded-2xl py-4 px-6 font-bold outline-none transition-all dark:text-white" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Phone Number</label>
-                <input required type="tel" placeholder="+91 00000 00000" className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-teal-500 rounded-2xl py-4 px-6 font-bold outline-none transition-all dark:text-white" />
+                <input name="phone" required type="tel" placeholder="+91 00000 00000" className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-teal-500 rounded-2xl py-4 px-6 font-bold outline-none transition-all dark:text-white" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Password</label>
-                <input required type="password" placeholder="••••••••" className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-teal-500 rounded-2xl py-4 px-6 font-bold outline-none transition-all dark:text-white" />
+                <input name="password" required type="password" placeholder="••••••••" className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-teal-500 rounded-2xl py-4 px-6 font-bold outline-none transition-all dark:text-white" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Confirm Password</label>
-                <input required type="password" placeholder="••••••••" className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-teal-500 rounded-2xl py-4 px-6 font-bold outline-none transition-all dark:text-white" />
+                <input name="confirmPassword" required type="password" placeholder="••••••••" className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-teal-500 rounded-2xl py-4 px-6 font-bold outline-none transition-all dark:text-white" />
               </div>
             </div>
 
