@@ -14,7 +14,7 @@ const BottomNav = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl h-20 flex items-center justify-around px-4 z-50 rounded-t-[32px] shadow-[0_-8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_-8px_30px_rgb(0,0,0,0.2)] transition-colors duration-500">
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl h-20 flex items-center justify-around px-4 z-50 rounded-t-[32px] shadow-[0_-8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_-8px_30px_rgb(0,0,0,0.2)]">
       {tabs.map((tab) => {
         const isActive = location.pathname === tab.path;
         return (

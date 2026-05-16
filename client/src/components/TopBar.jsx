@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft, Bell, Sun, Moon } from 'lucide-react';
 import { useThemeStore } from '../store/useStore';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const TopBar = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const TopBar = () => {
             <ChevronLeft size={24} className="text-gray-700 dark:text-gray-300" />
           </button>
         )}
-        <h1 className={`font-bold text-lg ${isHome ? 'text-teal-600 dark:text-teal-400' : 'text-gray-900 dark:text-white'}`}>
+        <h1 className={`font-bold text-lg transition-colors duration-500 ${isHome ? 'text-teal-600 dark:text-teal-400' : 'text-gray-900 dark:text-white'}`}>
           {getPageTitle()}
         </h1>
       </div>
@@ -38,10 +39,25 @@ const TopBar = () => {
       <div className="flex items-center gap-2">
         <button 
           onClick={toggleTheme}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+          className="relative w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors overflow-hidden"
         >
-          {theme === 'light' ? <Moon size={20} className="text-gray-600" /> : <Sun size={20} className="text-yellow-400" />}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={theme}
+              initial={{ y: 20, opacity: 0, rotate: -45 }}
+              animate={{ y: 0, opacity: 1, rotate: 0 }}
+              exit={{ y: -20, opacity: 0, rotate: 45 }}
+              transition={{ duration: 0.3, ease: 'backOut' }}
+            >
+              {theme === 'light' ? (
+                <Moon size={20} className="text-gray-600" />
+              ) : (
+                <Sun size={20} className="text-yellow-400" />
+              )}
+            </motion.div>
+          </AnimatePresence>
         </button>
+        
         <button className="relative p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
           <Bell size={20} className="text-gray-600 dark:text-gray-300" />
           <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-900" />
