@@ -15,6 +15,7 @@ import AdminLayout from './layouts/AdminLayout';
 import Home from './pages/Home';
 import Search from './pages/Search';
 import Login from './pages/Login';
+import ClinicDetail from './pages/ClinicDetail';
 import ClinicLogin from './pages/ClinicLogin';
 import ClinicRegister from './pages/ClinicRegister';
 import ClinicPending from './pages/ClinicPending';
@@ -57,6 +58,7 @@ function App() {
             <Route path="/" element={<PatientLayout />}>
               <Route index element={<Home />} />
               <Route path="search" element={<Search />} />
+              <Route path="clinics/:id" element={<ClinicDetail />} />
               <Route path="appointments" element={<Appointments />} />
               <Route path="profile" element={<Profile />} />
               <Route path="clinics/:slug" element={<div>Clinic Detail</div>} />
